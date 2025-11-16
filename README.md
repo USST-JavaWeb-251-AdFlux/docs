@@ -41,8 +41,8 @@
 ## 技术选型
 
 - 前端：Vue 3
-- 后端：JDK 17、SpringBoot
-- 数据库：
+- 后端：JDK 17、SpringBoot 2.7.6
+- 数据库：MySql 8.0
 
 ## 开发进度
 
