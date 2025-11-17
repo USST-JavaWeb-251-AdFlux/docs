@@ -40,13 +40,13 @@
 
 ## 技术选型
 
-- 前端：Vue 3
+- 前端：Vue 3、TypeScript
 - 后端：JDK 17、SpringBoot 2.7.6
 - 数据库：MySql 8.0
 
 ## 开发进度
 
 - [x] 设计基本思路、技术选型
-- [ ] API 设计
+- [ ] API Schema 设计
 - [ ] AdFlux 网站、News 网站 demo 开发
 - [ ] WIP...
