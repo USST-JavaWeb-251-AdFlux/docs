@@ -26,43 +26,77 @@
 
 # 3. 表结构设计
 
-## 3.1 users（用户基础表）
+## 3.1 user（用户基础表）
 
 用于统一管理登录账号。
 
-| 字段名     | 类型                                        | 描述     |
-| ---------- | ------------------------------------------- | -------- |
-| user_id    | INT PK AUTO_INCREMENT                       | 用户 ID  |
-| username   | VARCHAR(50) UNIQUE                          | 登录名   |
-| password   | VARCHAR(255)                                | 密码     |
-| user_type  | ENUM('superadmin','advertiser','publisher') | 用户类型 |
-| created_at | DATETIME                                    | 创建时间 |
+| 字段名       | 类型         | 描述                                  |
+| ------------ | ------------ | ------------------------------------- |
+| userId       | BIGINT       | 主键                                  |
+| userAccount  | VARCHAR(256) | 账号                                  |
+| userPassword | VARCHAR(512) | 密码                                  |
+| userRole     | VARCHAR(50)  | 用户角色：admin/advertiser/publicsher |
+| createTime   | DATETIME     | 创建时间                              |
+
+```mysql
+create table if not exists user
+(
+    userId           bigint auto_increment comment 'id' primary key,
+    userAccount  varchar(256)                           not null comment '账号',
+    userPassword varchar(512)                           not null comment '密码',
+    userRole     varchar(50) default 'advertiser'       not null comment '用户角色：admin/advertiser/publicsher',
+    createTime   datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    UNIQUE KEY uk_userAccount (userAccount)
+) comment '用户' collate = utf8mb4_unicode_ci;
+```
 
 ---
 
-## 3.2 advertisers（广告业主信息表，可选）
+## 3.2 advertisers_info（广告业主信息表）
 
-扩展广告业主的专属信息。
+广告业主的信息。
 
 | 字段名        | 类型                        | 描述         |
 | ------------- | --------------------------- | ------------ |
-| advertiser_id | INT PK, FK → users.user_id | 广告业主 ID |
-| company_name  | VARCHAR(100)                | 公司名称     |
+| advertiserId | BIGINT | 广告业主 ID |
+| companyName | VARCHAR(256)             | 公司名称     |
 | email         | VARCHAR(100)                | 邮箱         |
 | phone         | VARCHAR(50)                 | 电话         |
+
+```mysql
+create table if not exists advertisers_info
+(
+    advertiserId bigint                               not null comment '广告业主 ID' primary key,
+    companyName  varchar(256)                         not null comment '公司名称',
+    email        varchar(100)                         null comment '邮箱',
+    phone        varchar(50)                          null comment '电话'
+) comment '广告业主信息表' collate = utf8mb4_unicode_ci;
+
+```
 
 ---
 
 ## 3.3 advertiser_payment_info（广告业主付款信息）
 
-用于存储广告主的付款方式（可扩展）。
+用于存储广告主的付款方式。
 
 | 字段名        | 类型                                | 描述        |
 | ------------- | ----------------------------------- | ----------- |
-| payment_id    | INT PK AUTO_INCREMENT               | 支付信息 ID |
-| advertiser_id | INT FK → advertisers.advertiser_id | 广告业主 ID |
-| card_number   | VARCHAR(200)                        | 银行卡号    |
-| bank_name     | VARCHAR(100)                        | 银行名称    |
+| paymentid   | BIGINT       | 支付信息 ID |
+| advertiserId | BIGINT | 广告业主 ID |
+| cardNumber  | VARCHAR(200)                        | 银行卡号    |
+| bankName    | VARCHAR(100)                        | 银行名称    |
+
+```mysql
+create table if not exists advertiser_payment_info
+(
+    paymentId    bigint                               not null comment '支付信息 ID' primary key,
+    advertiserId bigint                               not null comment '广告业主 ID',
+    cardNumber   varchar(200)                         not null comment '银行卡号',
+    bankName     varchar(100)                         null comment '银行名称'
+) comment '广告业主付款信息' collate = utf8mb4_unicode_ci;
+
+```
 
 ---
 
@@ -72,46 +106,96 @@
 
 | 字段名             | 类型                    | 描述           |
 | ------------------ | ----------------------- | -------------- |
-| website_id         | INT PK AUTO_INCREMENT   | 网站 ID        |
-| publisher_id       | INT FK → users.user_id | 网站站长 ID    |
-| website_name       | VARCHAR(100)            | 网站名称       |
-| website_url        | VARCHAR(200) UNIQUE     | 网站地址       |
-| verification_token | VARCHAR(200)            | 验证代码       |
-| is_verified        | BOOLEAN                 | 是否已通过验证 |
-| verified_at        | DATETIME                | 验证时间       |
+| websiteId        | BIGINT | 网站 ID        |
+| publisherId      | BIGINT | 网站站长 ID    |
+| websiteName      | VARCHAR(100)            | 网站名称       |
+| domain | VARCHAR(200)     | 域名   |
+| verificationToken | VARCHAR(200)            | 验证代码       |
+| isVerified       | TYNYINT        | 是否已通过验证（0-未通过；1-通过） |
+| createTime | DATETIME                | 创建时间     |
+| verifyTime | DATETIME | 验证时间 |
+
+```mysql
+create table if not exists publishers
+(
+    websiteId         bigint                               not null comment '网站 ID' primary key,
+    publisherId       bigint                               not null comment '网站站长 ID',
+    websiteName       varchar(100)                         not null comment '网站名称',
+    domain              varchar(200)                         not null comment '网站地址',
+    verificationToken varchar(200)                         null comment '验证代码',
+    isVerified        tinyint       default 0              not null comment '是否已通过验证',
+    createTime        datetime      default CURRENT_TIMESTAMP not null comment '创建时间',
+    verifyTime        datetime      default CURRENT_TIMESTAMP not null comment '验证时间'
+) comment '网站站长信息表' collate = utf8mb4_unicode_ci;
+
+```
 
 ---
 
-## 3.5 categories（广告分类表）
+## 3.5 ad_kinds（广告分类表）
 
 用于管理员可添加的单一分类标签。
 
-| 字段名        | 类型                  | 描述        |
-| ------------- | --------------------- | ----------- |
-| category_id   | INT PK AUTO_INCREMENT | 广告类别 ID |
-| category_name | VARCHAR(100)          | 类别名称    |
-| created_at    | DATETIME              | 创建时间    |
+| 字段名       | 类型         | 描述        |
+| ------------ | ------------ | ----------- |
+| categoryId   | BIGINT       | 广告类别 ID |
+| categoryName | VARCHAR(100) | 类别名称    |
+| createTime   | DATETIME     | 创建时间    |
+
+```mysql
+create table if not exists ad_kinds
+(
+    categoryId   bigint                not null comment '广告类别 ID' primary key,
+    categoryName varchar(100)                          not null comment '类别名称',
+    createTime   datetime      default CURRENT_TIMESTAMP not null comment '创建时间'
+) comment '广告分类表' collate = utf8mb4_unicode_ci;
+```
+
+
 
 ---
 
-## 3.6 ads（广告信息表）
+## 3.6 advertisement（广告信息表）
 
 存储广告的核心数据。
 
 | 字段名           | 类型                                  | 描述                         |
 | ---------------- | ------------------------------------- | ---------------------------- |
-| ad_id            | INT PK AUTO_INCREMENT                 | 广告 ID                      |
-| advertiser_id    | INT FK → advertisers.advertiser_id   | 广告业主 ID                  |
-| ad_type          | ENUM('image','video')                 | 广告类型                     |
-| media_url        | VARCHAR(255)                          | 素材路径                     |
+| adId       | BITINT           | 广告 ID                      |
+| advertiserId   | BIGINT | 广告业主 ID                  |
+| adType         | INT              | 广告类型（0-image; 1-video） |
+| mediaUrl    | VARCHAR(255)                          | 素材路径                     |
 | title            | VARCHAR(200)                          | 广告标题                     |
-| landing_page_url | VARCHAR(255)                          | 点击跳转地址                 |
-| category_id      | INT FK → categories.category_id      | 广告类别 ID                  |
-| weekly_budget    | DECIMAL(10,2)                         | 周预算                       |
-| ad_format        | VARCHAR(50)                           | 广告尺寸或格式（如 300x250） |
-| audit_status     | ENUM('pending','approved','rejected') | 审核状态                     |
-| is_active        | BOOLEAN                               | 是否启用投放                 |
-| created_at       | DATETIME                              | 创建时间                     |
+| skipUrl | VARCHAR(255)                          | 点击跳转地址                 |
+| categoryId     | BIGINT | 广告类别 ID                  |
+| weeklyBudget | DECIMAL(10,2)                         | 周预算                       |
+| adFormat     | VARCHAR(50)                           | 广告尺寸或格式（如 300x250） |
+| reviewStatus | INT | 审核状态（0-待审核; 1-通过; 2-拒绝） |
+| isActive     | TYNYINT                        | 是否启用投放（0-是；1-否）   |
+| createTime   | DATETIME                              | 创建时间                     |
+| editTime | DATETIME | 编辑时间 |
+
+```mysql
+create table if not exists advertisement
+(
+    adId         bigint                                not null comment '广告 ID' primary key,
+    advertiserId bigint                                not null comment '广告业主 ID',
+    adType       int                                   not null comment '广告类型（0-image; 1-video）',
+    mediaUrl     varchar(255)                          not null comment '素材路径',
+    title        varchar(200)                          not null comment '广告标题',
+    skipUrl      varchar(255)                          null comment '点击跳转地址',
+    categoryId   bigint                                not null comment '广告类别 ID',
+    weeklyBudget decimal(10,2)                         not null comment '周预算',
+    adFormat     varchar(50)                           null comment '广告尺寸或格式（如 300x250）',
+    reviewStatus int           default 0               not null comment '审核状态（0-待审核; 1-通过; 2-拒绝）',
+    isActive     tinyint       default 0               not null comment '是否启用投放（0-是；1-否）',
+    createTime   datetime      default CURRENT_TIMESTAMP not null comment '创建时间',
+    editTime     datetime      default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP not null comment '编辑时间'
+) comment '广告信息表' collate = utf8mb4_unicode_ci;
+
+```
+
+
 
 ---
 
@@ -120,13 +204,26 @@
 记录匿名用户每一次在内容网站上的访问行为，用于推荐广告。
 
 | 字段名       | 类型                              | 描述         |
-| ------------ | --------------------------------- | ------------ |
-| visit_id     | INT PK AUTO_INCREMENT             | 主键         |
-| publisher_id | INT FK → publishers.publisher_id | 网站站长 ID  |
-| category_id  | INT FK → categories.category_id  | 广告类别 ID  |
-| anon_user_id | CHAR(64)                          | 匿名用户标识 |
+| ------------ | :-------------------------------- | ------------ |
+| visitId  | BIGINT       | 主键         |
+| publisherid | BIGINT | 网站站长 ID  |
+| categoryId | BIGINT | 广告类别 ID  |
+| userKey | CHAR(64)                          | 匿名用户标识 |
 | duration     | INT                               | 停留时长     |
 | timestamp    | DATETIME                          | 访问时间     |
+
+```mysql
+create table if not exists content_visit_stats
+(
+    visitId     bigint                                not null comment '主键' primary key,
+    publisherId bigint                                not null comment '网站站长 ID',
+    categoryId  bigint                                not null comment '广告类别 ID',
+    userKey     char(64)                              not null comment '匿名用户标识',
+    duration    int                                   not null comment '停留时长',
+    timestamp   datetime      default CURRENT_TIMESTAMP not null comment '访问时间'
+) comment '访问内容行为统计' collate = utf8mb4_unicode_ci;
+
+```
 
 ---
 
@@ -134,13 +231,25 @@
 
 记录匿名用户在内容网站上的访问行为，用于推荐广告。
 
-| 字段名       | 类型                                 | 描述             |
-| ------------ | ------------------------------------ | ---------------- |
-| anon_user_id | CHAR(64) PK                          | 匿名用户标识     |
-| category_id  | INT PK FK → categories.category_id | 广告类别 ID      |
-| visit_count  | INT                                  | 该类别访问次数   |
-| dwell_time   | INT                                  | 该类别总停留时长 |
-| last_visit   | DATETIME                             | 最近一次访问时间 |
+| 字段名      | 类型     | 描述             |
+| ----------- | -------- | ---------------- |
+| userKey     | CHAR(64) | 匿名用户标识     |
+| category_id | BIGINT   | 广告类别 ID      |
+| visitCount  | INT      | 该类别访问次数   |
+| dwellTime   | INT      | 该类别总停留时长 |
+| lastVisit   | DATETIME | 最近一次访问时间 |
+
+```mysql
+create table if not exists user_category_stats
+(
+    userKey     char(64)                              not null comment '匿名用户标识' primary key,
+    categoryId  bigint                                not null comment '广告类别 ID',
+    visitCount  int           default 0               not null comment '该类别访问次数',
+    dwellTime   int           default 0               not null comment '该类别总停留时长',
+    lastVisit   datetime      default CURRENT_TIMESTAMP not null comment '最近一次访问时间'
+) comment '匿名用户类别统计表' collate = utf8mb4_unicode_ci;
+
+```
 
 ---
 
