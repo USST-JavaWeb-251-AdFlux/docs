@@ -69,7 +69,8 @@ create table if not exists users
 create table if not exists advertisers
 (
     advertiserId bigint                               not null comment '广告业主 ID' primary key,
-    companyName  varchar(256)                         not null comment '公司名称'
+    companyName  varchar(256)                         not null comment '公司名称',
+    FOREIGN KEY (advertiserId) REFERENCES users(userId)
 ) comment '广告业主信息表' collate = utf8mb4_unicode_ci;
 
 ```
@@ -93,7 +94,8 @@ create table if not exists advertiser_payments
     paymentId    bigint                               not null comment '支付信息 ID' primary key,
     advertiserId bigint                               not null comment '广告业主 ID',
     cardNumber   varchar(200)                         not null comment '银行卡号',
-    bankName     varchar(100)                         null comment '银行名称'
+    bankName     varchar(100)                         null comment '银行名称',
+    FOREIGN KEY (advertiserId) REFERENCES users(userId)
 ) comment '广告业主付款信息' collate = utf8mb4_unicode_ci;
 
 ```
@@ -125,7 +127,8 @@ create table if not exists publishers
     verificationToken varchar(200)                         null comment '验证代码',
     isVerified        tinyint       default 0              not null comment '是否已通过验证',
     createTime        datetime      default CURRENT_TIMESTAMP not null comment '创建时间',
-    verifyTime        datetime      default NULL comment '验证时间'
+    verifyTime        datetime      default NULL comment '验证时间',
+    FOREIGN KEY (publisherId) REFERENCES users(userId)
 ) comment '网站站长信息表' collate = utf8mb4_unicode_ci;
 
 ```
@@ -186,7 +189,9 @@ create table if not exists advertisements
     reviewStatus int           default 0               not null comment '审核状态（0-待审核; 1-通过; 2-拒绝）',
     isActive     tinyint       default 0               not null comment '是否启用投放（0-否；1-是）',
     createTime   datetime      default CURRENT_TIMESTAMP not null comment '创建时间',
-    editTime     datetime      default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP not null comment '编辑时间'
+    editTime     datetime      default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP not null comment '编辑时间',
+    FOREIGN KEY (advertiserId) REFERENCES advertisers(advertiserId),
+    FOREIGN KEY (categoryId) REFERENCES ad_categories(categoryId)
 ) comment '广告信息表' collate = utf8mb4_unicode_ci;
 
 ```
@@ -214,35 +219,41 @@ create table if not exists content_visit_stats
     categoryId  bigint                                not null comment '广告类别 ID',
     userKey     char(64)                              not null comment '匿名用户标识',
     duration    int                                   not null comment '停留时长',
-    timestamp   datetime      default CURRENT_TIMESTAMP not null comment '访问时间'
+    timestamp   datetime      default CURRENT_TIMESTAMP not null comment '访问时间',
+    FOREIGN KEY (websiteId) REFERENCES publishers(websiteId),
+    FOREIGN KEY (categoryId) REFERENCES ad_categories(categoryId)
 ) comment '访问内容行为统计' collate = utf8mb4_unicode_ci;
 
 ```
 
 ---
 
-## 3.8 user_category_stats（匿名用户类别统计表）
+## 3.8 ad_displays（广告展示表）
 
-记录匿名用户在内容网站上的访问行为，用于推荐广告。
+记录每一次向匿名用户展示广告和相关统计信息，用于统计和推荐广告。
 
-| 字段名      | 类型     | 描述             |
-| ----------- | -------- | ---------------- |
-| userKey     | CHAR(64) | 匿名用户标识     |
-| category_id | BIGINT   | 广告类别 ID      |
-| visitCount  | INT      | 该类别访问次数   |
-| dwellTime   | INT      | 该类别总停留时长 |
-| lastVisit   | DATETIME | 最近一次访问时间 |
+| 字段名      | 类型     | 描述         |
+| ----------- | -------- | ------------ |
+| displayId   | BIGINT   | 主键         |
+| userKey     | CHAR(64) | 匿名用户标识 |
+| adId        | BIGINT   | 广告 ID      |
+| duration    | INT      | 停留时长     |
+| clicked     | BOOL     | 是否点击     |
+| displayTime | DATETIME | 展示时间     |
+| clickTime   | DATETIME | 点击时间     |
 
 ```mysql
-create table if not exists user_category_stats
+create table if not exists ad_displays
 (
+    displayId   bigint                                not null comment '主键' primary key,
     userKey     char(64)                              not null comment '匿名用户标识',
-    categoryId  bigint                                not null comment '广告类别 ID',
-    visitCount  int           default 0               not null comment '该类别访问次数',
-    dwellTime   int           default 0               not null comment '该类别总停留时长',
-    lastVisit   datetime      default CURRENT_TIMESTAMP not null comment '最近一次访问时间'
-    primary key (userKey, categoryId)
-) comment '匿名用户类别统计表' collate = utf8mb4_unicode_ci;
+    adId        bigint                                not null comment '广告 ID',
+    duration    int           default 0               not null comment '停留时长',
+    clicked     tinyint       default 0               not null comment '是否点击',
+    displayTime datetime      default CURRENT_TIMESTAMP not null comment '展示时间',
+    clickTime   datetime      default NULL comment '点击时间',
+    FOREIGN KEY (adId) REFERENCES advertisements(adId)
+) comment '广告展示表' collate = utf8mb4_unicode_ci;
 
 ```
 
