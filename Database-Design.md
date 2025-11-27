@@ -207,7 +207,7 @@ create table if not exists advertisements
 | visitId    | BIGINT   | 主键         |
 | websiteId  | BIGINT   | 网站 ID      |
 | categoryId | BIGINT   | 广告类别 ID  |
-| userKey    | CHAR(64) | 匿名用户标识 |
+| trackId    | CHAR(36) | 匿名用户标识 |
 | duration   | INT      | 停留时长     |
 | timestamp  | DATETIME | 访问时间     |
 
@@ -217,7 +217,7 @@ create table if not exists content_visit_stats
     visitId     bigint                                not null comment '主键' primary key,
     websiteId   bigint                                not null comment '网站 ID',
     categoryId  bigint                                not null comment '广告类别 ID',
-    userKey     char(64)                              not null comment '匿名用户标识',
+    trackId     char(36)                              not null comment '匿名用户标识',
     duration    int                                   not null comment '停留时长',
     timestamp   datetime      default CURRENT_TIMESTAMP not null comment '访问时间',
     FOREIGN KEY (websiteId) REFERENCES publishers(websiteId),
@@ -235,8 +235,9 @@ create table if not exists content_visit_stats
 | 字段名      | 类型     | 描述         |
 | ----------- | -------- | ------------ |
 | displayId   | BIGINT   | 主键         |
-| userKey     | CHAR(64) | 匿名用户标识 |
+| trackId     | CHAR(36) | 匿名用户标识 |
 | adId        | BIGINT   | 广告 ID      |
+| websiteId   | BIGINT   | 网站 ID      |
 | duration    | INT      | 停留时长     |
 | clicked     | BOOL     | 是否点击     |
 | displayTime | DATETIME | 展示时间     |
@@ -246,8 +247,9 @@ create table if not exists content_visit_stats
 create table if not exists ad_displays
 (
     displayId   bigint                                not null comment '主键' primary key,
-    userKey     char(64)                              not null comment '匿名用户标识',
+    trackId     char(36)                              not null comment '匿名用户标识',
     adId        bigint                                not null comment '广告 ID',
+    websiteId   bigint                                not null comment '网站 ID',
     duration    int           default 0               not null comment '停留时长',
     clicked     tinyint       default 0               not null comment '是否点击',
     displayTime datetime      default CURRENT_TIMESTAMP not null comment '展示时间',
