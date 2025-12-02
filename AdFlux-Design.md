@@ -100,15 +100,15 @@
 * **Endpoint**: `GET /api/v1/ad/serve`
 * **请求参数 (Request Params)**:
 
-  * `placement\\\_id`: 广告位 ID（后端据此判断需要返回什么形状的素材，如 100x100 或 300x50）。
-  * `context\\\_tag`: 当前页面的内容标签（如 "digital", "sports"）。
-  * `mime\\\_type`: 期望的媒体类型（"image/jpeg" 或 "video/mp4"）。
-  * `cookie\\\_id`: **(关键)** 浏览器自动携带的 Cookie，用于唯一标识匿名用户。
+  * `placement_id`: 广告位 ID（后端据此判断需要返回什么形状的素材，如 100x100 或 300x50）。
+  * `context_tag`: 当前页面的内容标签（如 "digital", "sports"）。
+  * `mime_type`: 期望的媒体类型（"image/jpeg" 或 "video/mp4"）。
+  * `cookie_id`: **(关键)** 浏览器自动携带的 Cookie，用于唯一标识匿名用户。
 
 * **后端逻辑 (Backend Logic)**:
 
-  1. **用户识别**：通过 `cookie\\\_id` 在数据库查找用户画像 (User Profile)。
-  2. **画像更新**：将本次请求的 `context\\\_tag` 计入用户兴趣权重（例：该用户对 "数码" 兴趣度 +1）。
+  1. **用户识别**：通过 `cookie_id` 在数据库查找用户画像 (User Profile)。
+  2. **画像更新**：将本次请求的 `context_tag` 计入用户兴趣权重（例：该用户对 "数码" 兴趣度 +1）。
   3. **智能匹配 (Matching Algorithm)**：
 
      * **Filter 1 (硬性条件)**：筛选出符合当前 `Layout` (版式) 和 `MIME` 类型的广告。
