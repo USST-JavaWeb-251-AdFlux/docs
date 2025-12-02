@@ -8,13 +8,13 @@
 
 本系统的数据库用于管理：
 
--   用户与角色（管理员 / 广告业主 / 内容站点负责人）
--   广告分类
--   广告基本信息与审核流程
--   广告预算与投放状态
--   广告展示与点击统计
--   内容网站信息与验证流程
--   广告事件级统计与推荐相关行为数据
+- 用户与角色（管理员 / 广告业主 / 内容站点负责人）
+- 广告分类
+- 广告基本信息与审核流程
+- 广告预算与投放状态
+- 广告展示与点击统计
+- 内容网站信息与验证流程
+- 广告事件级统计与推荐相关行为数据
 
 ---
 
@@ -24,7 +24,7 @@
 
 ---
 
-# 3. 表结构设计
+# 3. 广告表结构设计
 
 ## 3.1 users（用户基础表）
 
@@ -160,20 +160,21 @@ create table if not exists ad_categories
 
 存储广告的核心数据。
 
-| 字段名       | 类型          | 描述                                 |
-| ------------ | ------------- | ------------------------------------ |
-| adId         | BIGINT        | 广告 ID                              |
-| advertiserId | BIGINT        | 广告业主 ID                          |
-| adType       | INT           | 广告类型（0-image; 1-video）         |
-| mediaUrl     | VARCHAR(255)  | 素材路径                             |
-| title        | VARCHAR(200)  | 广告标题                             |
-| landingPage  | VARCHAR(255)  | 点击跳转地址                         |
-| categoryId   | BIGINT        | 广告类别 ID                          |
-| weeklyBudget | DECIMAL(10,2) | 周预算                               |
-| reviewStatus | INT           | 审核状态（0-待审核; 1-通过; 2-拒绝） |
-| isActive     | TINYINT       | 是否启用投放（0-否；1-是）           |
-| createTime   | DATETIME      | 创建时间                             |
-| editTime     | DATETIME      | 编辑时间                             |
+| 字段名       | 类型          | 描述                                      |
+| ------------ | ------------- | ----------------------------------------- |
+| adId         | BIGINT        | 广告 ID                                   |
+| advertiserId | BIGINT        | 广告业主 ID                               |
+| adType       | INT           | 广告类型（0-image; 1-video）              |
+| mediaUrl     | VARCHAR(255)  | 素材路径                                  |
+| title        | VARCHAR(200)  | 广告标题                                  |
+| landingPage  | VARCHAR(255)  | 点击跳转地址                              |
+| categoryId   | BIGINT        | 广告类别 ID                               |
+| adLayout     | VARCHAR(20)   | 广告版式（0-banner； 1-sidebar； 2-card） |
+| weeklyBudget | DECIMAL(10,2) | 周预算                                    |
+| reviewStatus | INT           | 审核状态（0-待审核; 1-通过; 2-拒绝）      |
+| isActive     | TINYINT       | 是否启用投放（0-否；1-是）                |
+| createTime   | DATETIME      | 创建时间                                  |
+| editTime     | DATETIME      | 编辑时间                                  |
 
 ```mysql
 create table if not exists advertisements
@@ -185,6 +186,7 @@ create table if not exists advertisements
     title        varchar(200)                          not null comment '广告标题',
     landingPage  varchar(255)                          null comment '点击跳转地址',
     categoryId   bigint                                not null comment '广告类别 ID',
+    adLayout     varchar(20)                           not null comment '广告版式（0-banner； 1-sidebar； 2-card）',
     weeklyBudget decimal(10,2)                         not null comment '周预算',
     reviewStatus int           default 0               not null comment '审核状态（0-待审核; 1-通过; 2-拒绝）',
     isActive     tinyint       default 0               not null comment '是否启用投放（0-否；1-是）',
@@ -261,31 +263,88 @@ create table if not exists ad_displays
 
 ---
 
-# 4. 字段设计与业务规则说明
+## 3.9 ad_placements(广告位表)
 
-1. 用户采用统一 user 表管理，不同用户类型通过子表扩展。
-2. 广告默认创建状态为：
-    - audit_status = pending
-    - is_active = false
-3. 广告业主要上传：广告类型、素材文件、标题、跳转 URL、所属分类。
-4. 广告预算 weekly_budget 必须为正数。
-5. 广告审核只能由管理员执行。
-6. 内容网站的验证通过 verification_token 实现，站长需在网站根目录放置指定文件。
-7. 广告展示与点击统计通过 ad_stats 维护。
-8. 推荐算法依赖 content_visit_stats 和 user_category_stats。
+| 字段名        | 类型         | 描述       |
+| ------------- | ------------ | ---------- |
+| placementId   | BIGINT       | 广告位 ID  |
+| websiteId     | BIGINT       | 网站 ID    |
+| placementName | VARCHAR(100) | 广告位名称 |
+| adLayout      | VARCHAR(20)  | 广告版式   |
+| createTime    | DATETIME     | 创建时间   |
 
 ---
 
-# 5. 后续扩展方向
+# 4. 新闻表结构设计
 
--   绑定多种付款方式
--   视频广告托管服务
--   更复杂的广告推荐算法
--   按小时统计广告数据
--   站点黑名单和广告过滤规则
+## 4.1 news_categories（新闻分类表）
+
+| 字段名       | 类型         | 描述        |
+| ------------ | ------------ | ----------- |
+| categoryId   | BIGINT       | 新闻类别 ID |
+| categoryName | VARCHAR(100) | 类别名称    |
+| createTime   | DATETIME     | 创建时间    |
 
 ---
 
-# 6. 结语
+## 4.2 news（新闻内容表）
 
-本数据库设计覆盖当前全部功能需求，并预留扩展空间，可支持未来的统计分析、广告推荐、复杂投放逻辑等业务。
+| 字段名     | 类型         | 描述        |
+| ---------- | ------------ | ----------- |
+| newsId     | BIGINT       | 新闻 ID     |
+| title      | VARCHAR(255) | 新闻标题    |
+| content    | text         | 新闻正文    |
+| categoryId | BIGINT       | 新闻类别 ID |
+| createTime | DATETIME     | 创建时间    |
+
+---
+
+# 5. 购物表结构设计
+
+## 5.1 product_categories（商品分类表）
+
+| 字段名       | 类型         | 描述        |
+| ------------ | ------------ | ----------- |
+| categoryId   | BIGINT       | 商品类别 ID |
+| categoryName | VARCHAR(100) | 类别名称    |
+| createTime   | DATETIME     | 创建时间    |
+
+---
+
+## 5.2 products（商品内容表）
+
+| 字段名      | 类型           | 描述        |
+| ----------- | -------------- | ----------- |
+| productId   | BIGINT         | 商品 ID    |
+| productName | VARCHAR(255)   | 商品名称    |
+| price       | decimal(10, 2) | 商品价格    |
+| description | text           | 商品描述    |
+| imageUrl    | varchar(255)   | 商品图片URL |
+| categoryId  | BIGINT         | 商品类别 ID |
+| createTime  | DATETIME       | 创建时间    |
+
+---
+
+# 6. 视频表结构设计
+
+## 6.1 video_categories（视频分类表）
+
+| 字段名       | 类型         | 描述        |
+| ------------ | ------------ | ----------- |
+| categoryId   | BIGINT       | 视频类别 ID |
+| categoryName | VARCHAR(100) | 类别名称    |
+| createTime   | DATETIME     | 创建时间    |
+
+---
+
+## 6.2 videos（视频内容表）
+
+| 字段名     | 类型         | 描述         |
+| ---------- | ------------ | ------------ |
+| videoId    | BIGINT       | 视频 ID      |
+| video      | VARCHAR(255) | 视频标题     |
+| videoUrl   | VARCHAR(255) | 视频文件地址 |
+| coverUrl   | VARCHAR(255) | 封面图       |
+| duration   | BIGINT       | 视频时长     |
+| categoryId | BIGINT       | 视频类别 ID  |
+| createTime | DATETIME     | 创建时间     |
