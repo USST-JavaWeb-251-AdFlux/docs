@@ -1,286 +1,115 @@
-# 广告系统 API 接口设计文档 (API Design)
 
-## 一、 接口设计基础规范 (Base Info)
+## 基础服务与认证 (Auth & Common)
 
-* **基础路径 (Base URL)**：`http://{server_ip}:8080/api/v1`
-* **通信协议**：HTTP/1.1
-* **数据格式**：JSON
-* **字符编码**：UTF-8
-* **跨域支持 (CORS)**：公共投放接口必须允许所有域名访问 (`Access-Control-Allow-Origin: *`)。
-
-### 统一响应结构 (Response Wrapper)
-
-所有接口（无论成功失败）均返回以下结构：
-
-```json
-{
-  "code": 200,
-  "message": "success",
-  "data": { }
-}
-```
+POST /auth/register # 用户注册（广告主/站长）
+POST /auth/login # 用户登录，获取 Token
+POST /auth/logout # 退出登录
+GET /users/me # 获取当前登录用户的详细信息
+PUT /users/me # 修改个人信息（邮箱、电话）（待定）
+POST /uploads # 通用文件上传（图片/视频），返回 URL
 
 ---
 
-## 二、 公共投放 API (Public Ad Serving APIs)
+## 广告业主模块 (Advertiser)
 
-**使用者**：新闻网、购物网、视频网的前端 JS SDK。
-**鉴权方式**：无需登录，通过 `placement_id`识别来源。
+### 资料与支付
 
-### 1. 获取广告 (Fetch Ad)
+GET /advertisers/profile # 获取业主公司信息
+PUT /advertisers/profile # 修改业主公司名称信息（待定）
+GET /advertisers/payment-methods # 获取已绑定的支付方式列表
+POST /advertisers/payment-methods # 添加新的银行卡/支付方式
+DELETE /advertisers/payment-methods/{paymentMethodId} # 删除某个支付方式（待定）
 
-核心接口。根据广告位配置和用户画像，返回一个最佳匹配的广告。
+### 广告管理
 
-* **URL**: GET /ad/serve
-* **描述**: 获取广告素材。
-* **请求参数 (Query Params)**:
+GET /advertisers/ads # 获取我的广告列表（支持按状态筛选）
+POST /advertisers/ads # 创建新广告（初始状态：待审核）
+GET /advertisers/ads/{adId} # 获取单个广告详情
+PUT /advertisers/ads/{adId} # 修改广告内容（修改后可能需重审）
+DELETE /advertisers/ads/{adId} # 删除广告（逻辑删除）
+PUT /advertisers/ads/{adId}/status # 切换广告投放状态（开启/暂停）
 
-| **参数名** | **类型** | **必填** | **示例** | **说明**                                      |
-| ---------------- | -------------- | -------------- | -------------- | --------------------------------------------------- |
-| placement_id     | Long           | 是             | 1001           | 广告位ID（后端据此确定广告版式，如 Banner/Sidebar） |
-| cookie_id        | String         | 否             | usr_123        | 用户的唯一标识（若前端 Cookie 为空则不传）          |
-| context_tag      | String         | 否             | digital        | 当前页面内容的标签（用于更新画像和上下文匹配）      |
-| mime_type        | String         | 否             | video/mp4      | 期望的媒体类型（仅视频插播时需要传）                |
+### 数据统计
 
-* **响应示例 (Success Response)**:
-
-```
-{
-  "code": 200,
-  "message": "success",
-  "data": {
-    "ad_id": 505,
-    "type": "image",
-    "layout": "banner",
-    "src": "http://img.ad-server.com/uploads/iphone15_banner.jpg",
-    "link": "http://apple.com/buy",
-    "cookie_id": "usr_999_new", 
-    "tracking_url": "http://api.ad-server.com/api/v1/ad/track"
-  }
-}
-```
-
-> **注意**：如果请求中没传 **cookie_id**，后端会在响应中的 **cookie_id** **字段返回一个新生成的 ID，前端 SDK 必须将其写入浏览器 Cookie。**
-
-### 2. 行为上报 (Tracking)
-
-**用于统计展示量（CPM）和点击量（CPC）。**
-
-* **URL**: **POST /ad/track**
-* **Content-Type**: **application/json**
-* **请求体示例**:
-
-**code**JSON
-
-```
-{
-  "ad_id": 505,
-  "placement_id": 1001,
-  "cookie_id": "usr_999_new",
-  "event_type": "impression", 
-  "timestamp": 1718888888
-}
-```
-
-> **event_type** **枚举值：**impression **(展示),** **click** **(点击).**
+GET /advertisers/statistics/summary # 获取账户级广告数据概览（总花费、总展示）
+GET /advertisers/ads/{adId}/statistics # 获取指定广告的详细报表
 
 ---
 
-## 三、 广告业主后台 API (Advertiser APIs)
+## 网站站长模块 (Publisher)
 
-  **使用者**：广告主管理面板。
-鉴权方式**：Header 需携带 Token。**
+### 网站接入
 
-### 1. 上传素材
+GET /publishers/sites # 获取我的网站列表
+POST /publishers/sites # 提交新网站信息
+GET /publishers/sites/{siteId}/verification-token # 获取验证所需的 Token 字符串
+POST /publishers/sites/{siteId}/verification # 触发系统去验证网站所有权
 
-* **URL**: **POST /upload/media**
-* **Content-Type**: **multipart/form-data**
-* **参数**: **file** **(文件流)**
-* **响应**:
+### 广告位管理
 
-**code**JSON
+GET /publishers/ad-slots # 获取我的广告位列表
+POST /publishers/ad-slots # 创建广告位（指定版式 Layout）
+GET /publishers/ad-slots/{adSlotId} # 获取广告位详情
+PUT /publishers/ad-slots/{adSlotId} # 修改广告位名称
+GET /publishers/ad-slots/{adSlotId}/integration-code # 获取该广告位的集成 SDK 代码
 
-```
-{
-  "code": 200,
-  "message": "success",
-  "data": {
-    "url": "http://server/uploads/ads/video_01.mp4",
-    "mime_type": "video/mp4"
-  }
-}
-```
+### 收益统计
 
-### 2. 创建广告
-
-* **URL**: **POST /advertiser/ads**
-* **请求体示例**:
-
-**code**JSON
-
-```
-{
-  "title": "夏季运动鞋大促",
-  "category_id": 102,
-  "media_url": "http://server/uploads/ads/shoe_sidebar.jpg",
-  "ad_type": 0,
-  "layout": "sidebar",
-  "landing_page": "http://nike.com/promo",
-  "weekly_budget": 5000.00
-}
-```
-
-> **ad_type**: 0 (图片), 1 (视频). **layout**: banner / sidebar / card.
-
-### 3. 获取广告列表
-
-* **URL**: **GET /advertiser/ads**
-* **参数**: **status** **(可选，如** **pending**, **active**)
-* **响应**:
-
-**code**JSON
-
-```
-{
-  "code": 200,
-  "message": "success",
-  "data": [
-    {
-      "ad_id": 1,
-      "title": "测试广告",
-      "status": "active"
-    }
-  ]
-}
-```
+GET /publishers/statistics # 获取流量与预估收益统计（待定）
 
 ---
 
-## 四、 站长后台 API (Publisher APIs)
+## 管理员模块 (Admin)
 
- **使用者**：内容网站负责人。
+### 广告审核
 
-### 1. 提交网站认证
+GET /admin/ads?status=pending # 获取所有待审核的广告
+PUT /admin/ads/{adId}/review # 提交审核结果（通过/拒绝）
 
-* **URL**: **POST /publisher/site/verify**
-* **请求体**:
+### 分类与配置
 
-**code**JSON
+GET /admin/categories # 获取所有广告分类列表
+POST /admin/categories # 添加广告分类标签（如：数码、美妆）
 
-```
-{
-  "domain": "http://www.news.com",
-  "name": "每日新闻网"
-}
-```
+### 用户管理
 
-* **后端逻辑**: 访问 **http://www.news.com/token.txt** **验证所有权。**
-
-### 2. 创建广告位 (Create Placement)
-
-**站长定义自己的网站哪里有空位，以及空位的形状。**
-
-* **URL**: **POST /publisher/placements**
-* **请求体示例**:
-
-**code**JSON
-
-```
-{
-  "website_id": 12,
-  "name": "文章详情页右侧栏",
-  "layout": "sidebar"
-}
-```
-
-* **响应**:
-
-**code**JSON
-
-```
-{
-  "code": 200,
-  "message": "success",
-  "data": {
-    "placement_id": 2002
-  }
-}
-```
-
-### 3. 获取我的广告位
-
-* **URL**: **GET /publisher/placements**
-* **响应**:
-
-**code**JSON
-
-```
-{
-  "code": 200,
-  "message": "success",
-  "data": [
-    { "placement_id": 2002, "name": "右侧栏", "layout": "sidebar" }
-  ]
-}
-```
+GET /admin/users # 获取系统用户列表
+GET /admin/users?role=admin # 获取系统内所有管理员列表（用于查看谁拥有管理权限）（待定）
+POST /admin/users # 创建一个新的管理员账号（直接设置用户名、密码、角色为admin）
+DELETE /admin/users/{userId} # 删除指定管理员账号（或移除其管理员权限）（待定）
 
 ---
 
-## 五、 管理员 API (Admin APIs)
+## 公共广告引擎 (Public Ad Engine)
 
-### 1. 审核广告
+### 核心投放
 
-* **URL**: **POST /admin/audit**
-* **请求体**:
+GET /public/ads/serve # [核心] 请求广告（根据 PlacementId + TrackId + Context）
+POST /public/ads/impressions # [核心] 上报广告展示数据
+POST /public/ads/clicks # [核心] 上报广告点击数据
 
-**code**JSON
+### 用户画像积累
 
-```
-{
-  "ad_id": 505,
-  "pass": true,
-  "reason": "合规"
-}
-```
-
-### 2. 添加分类标签
-
-* **URL**: **POST /admin/categories**
-* **请求体**:
-
-**code**JSON
-
-```
-{ 
-  "name": "数码电子" 
-}
-```
+POST /public/user-behaviors # 上报内容页访问数据（记录 trackId 在哪个分类停留了多久）
 
 ---
 
-## 六、 视频网站特殊对接说明
+## 内容网站
 
-**针对** **视频分享网站 (Server 4)** **的流媒体插播功能，对接逻辑如下：**
+### 新闻网站内容接口 (News Site API)
 
-* **触发时机**：
-  前端 JS 监听 **video** **标签的** **timeupdate** **事件，当播放时间 > 阈值（如10秒）时触发。**
-* **API 调用参数**：
+GET /news/categories # 获取新闻分类列表
+GET /news/articles # 获取新闻列表（支持按分类筛选）
+GET /news/articles/{articleId} # 获取单篇新闻详情
 
-  * **mime_type**: 必须传 **video/mp4**，告诉后端我只要视频。
-* **placement_id**: 必须是一个在后台配置为 **layout=card** **(或者专用的 video layout) 的广告位 ID。**
-* **前端代码逻辑示例**:
+### 购物网站内容接口 (Shop Site API)
 
-**code**JavaScript
+GET /shop/categories # 获取商品分类列表
+GET /shop/products # 获取商品列表（支持按分类筛选）
+GET /shop/products/{productId} # 获取商品详情
 
-```
-// 伪代码
-fetch('http://server1/api/v1/ad/serve?placement_id=3001&mime_type=video/mp4')
-  .then(res => res.json())
-  .then(response => {
-      if(response.code === 200) {
-          const adUrl = response.data.src;
-          // 逻辑：暂停主视频，播放 adUrl，播放完恢复
-          playAdOverlay(adUrl);
-      }
-  });
-```
+### 视频网站内容接口 (Video Site API)
+
+GET /videos/categories # 获取视频分类列表
+GET /videos # 获取视频列表
+GET /videos/{videoId} # 获取视频详情与播放地址
