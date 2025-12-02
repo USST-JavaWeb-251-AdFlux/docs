@@ -273,6 +273,18 @@ create table if not exists ad_displays
 | adLayout      | VARCHAR(20)  | 广告版式   |
 | createTime    | DATETIME     | 创建时间   |
 
+```mysql
+create table if not exists ad_placements
+(
+    placementId   bigint                               not null comment '广告位 ID' primary key,
+    websiteId     bigint                               not null comment '网站 ID，关联 publishers.websiteId',
+    placementName varchar(100)                         not null comment '广告位名称',
+    adLayout      varchar(20)                          not null comment '广告版式',
+    createTime    datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    foreign key (websiteId) references publishers(websiteId)
+) comment '广告位表' collate = utf8mb4_unicode_ci;
+
+```
 ---
 
 # 4. 新闻表结构设计
@@ -284,7 +296,15 @@ create table if not exists ad_displays
 | categoryId   | BIGINT       | 新闻类别 ID |
 | categoryName | VARCHAR(100) | 类别名称    |
 | createTime   | DATETIME     | 创建时间    |
+```mysql
+create table if not exists news_categories
+(
+    categoryId   bigint                              not null comment '新闻类别 ID' primary key,
+    categoryName varchar(100)                        not null comment '类别名称，例如：科技、体育',
+    createTime   datetime default CURRENT_TIMESTAMP  not null comment '创建时间'
+) comment '新闻分类表' collate = utf8mb4_unicode_ci;
 
+```
 ---
 
 ## 4.2 news（新闻内容表）
@@ -297,6 +317,19 @@ create table if not exists ad_displays
 | categoryId | BIGINT       | 新闻类别 ID |
 | createTime | DATETIME     | 创建时间    |
 
+```mysql
+create table if not exists news
+(
+    newsId      bigint                                not null comment '新闻 ID' primary key,
+    title       varchar(255)                          not null comment '新闻标题',
+    content     text                                  not null comment '新闻正文',
+    categoryId  bigint                                not null comment '新闻类别 ID，关联 news_categories.categoryId',
+    coverUrl    varchar(500)      default null        null comment '封面图片地址',
+    createTime  datetime          default CURRENT_TIMESTAMP not null comment '创建时间',
+    FOREIGN KEY (categoryId) REFERENCES news_categories(categoryId)
+) comment '新闻内容表' collate = utf8mb4_unicode_ci;
+
+```
 ---
 
 # 5. 购物表结构设计
@@ -309,6 +342,15 @@ create table if not exists ad_displays
 | categoryName | VARCHAR(100) | 类别名称    |
 | createTime   | DATETIME     | 创建时间    |
 
+```mysql
+create table if not exists product_categories
+(
+    categoryId   bigint                              not null comment '商品类别 ID' primary key,
+    categoryName varchar(100)                        not null comment '类别名称',
+    createTime   datetime default CURRENT_TIMESTAMP  not null comment '创建时间'
+) comment '商品分类表' collate = utf8mb4_unicode_ci;
+
+```
 ---
 
 ## 5.2 products（商品内容表）
@@ -323,6 +365,20 @@ create table if not exists ad_displays
 | categoryId  | BIGINT         | 商品类别 ID |
 | createTime  | DATETIME       | 创建时间    |
 
+```mysql
+create table if not exists products
+(
+    productId    bigint                               not null comment '商品 ID' primary key,
+    productName  varchar(255)                         not null comment '商品名称',
+    price        decimal(10, 2)                       not null comment '商品价格',
+    description  text                                 null comment '商品描述',
+    imageUrl     varchar(255)     default null        null comment '商品图片 URL',
+    categoryId   bigint                               not null comment '商品类别 ID，关联 product_categories.categoryId',
+    createTime   datetime         default CURRENT_TIMESTAMP not null comment '创建时间',
+    foreign key (categoryId) references product_categories(categoryId)
+) comment '商品内容表' collate = utf8mb4_unicode_ci;
+
+```
 ---
 
 # 6. 视频表结构设计
@@ -335,6 +391,15 @@ create table if not exists ad_displays
 | categoryName | VARCHAR(100) | 类别名称    |
 | createTime   | DATETIME     | 创建时间    |
 
+```mysql
+create table if not exists video_categories
+(
+    categoryId   bigint                              not null comment '视频类别 ID' primary key,
+    categoryName varchar(100)                        not null comment '类别名称',
+    createTime   datetime default CURRENT_TIMESTAMP  not null comment '创建时间'
+) comment '视频分类表' collate = utf8mb4_unicode_ci;
+
+```
 ---
 
 ## 6.2 videos（视频内容表）
@@ -348,3 +413,19 @@ create table if not exists ad_displays
 | duration   | BIGINT       | 视频时长     |
 | categoryId | BIGINT       | 视频类别 ID  |
 | createTime | DATETIME     | 创建时间     |
+
+```mysql
+create table if not exists videos
+(
+    videoId     bigint                               not null comment '视频 ID' primary key,
+    video       varchar(255)                         not null comment '视频标题',
+    videoUrl    varchar(255)                         not null comment '视频文件地址',
+    coverUrl    varchar(255)      default null       null comment '封面图',
+    duration    bigint                               not null comment '视频时长',
+    categoryId  bigint                               not null comment '视频类别 ID，关联 video_categories.categoryId',
+    createTime  datetime          default CURRENT_TIMESTAMP not null comment '创建时间',
+    foreign key (categoryId) references video_categories(categoryId)
+) comment '视频内容表' collate = utf8mb4_unicode_ci;
+
+
+```
