@@ -7,19 +7,19 @@
 
 所有接口（除个别健康检查外）统一返回 JSON，结构如下：
 
-| 字段名 | 类型   | 是否必须 | 说明                              |
-| ------ | ------ | -------- | --------------------------------- |
-| code   | number | 必须     | 响应码，1 表示成功，0 表示失败    |
-| msg    | string | 非必须   | 提示信息（成功或错误原因）        |
-| data   | object | 非必须   | 具体业务数据，结构因接口而不同    |
+| 字段名 | 类型   | 是否必须 | 说明                             |
+| ------ | ------ | -------- | -------------------------------- |
+| code   | number | 必须     | 响应码，0 表示成功，其他表示失败 |
+| data   | object | 非必须   | 具体业务数据，结构因接口而不同   |
+| msg    | string | 非必须   | 提示信息（成功或错误原因）       |
 
 示例：
 
 ```json
 {
-  "code": 1,
-  "msg": "success",
-  "data": { }
+  "code": 0,
+  "data": { },
+  "msg": "success"
 }
 ```
 
@@ -54,21 +54,21 @@
 
 - **参数格式**：`application/json`
 
-| 参数名   | 类型   | 是否必需 | 说明                                          |
-| -------- | ------ | -------- | --------------------------------------------- |
-| username | string | 必须     | 登录用户名，唯一                              |
-| password | string | 必须     | 登录密码明文，后端保存为 `userPassword` Hash |
-| userRole | string | 必须     | 用户角色：`advertiser` 或 `publisher`        |
-| email    | string | 非必须   | 邮箱，对应 `users.email`                     |
-| phone    | string | 非必须   | 电话，对应 `users.phone`                     |
+| 参数名       | 类型   | 是否必需 | 说明                                         |
+| ------------ | ------ | -------- | -------------------------------------------- |
+| username     | string | 必须     | 登录用户名，唯一                             |
+| userPassword | string | 必须     | 登录密码明文，后端保存为 `userPassword` Hash |
+| role         | string | 必须     | 用户角色：`advertiser` 或 `publisher`        |
+| email        | string | 非必须   | 邮箱，对应 `users.email`                     |
+| phone        | string | 非必须   | 电话，对应 `users.phone`                     |
 
 请求示例：
 
 ```json
 {
   "username": "alice",
-  "password": "123456",
-  "userRole": "advertiser",
+  "userPassword": "123456",
+  "role": "advertiser",
   "email": "alice@example.com",
   "phone": "13800000000"
 }
@@ -78,25 +78,15 @@
 
 - **参数格式**：`application/json`
 
-`data` 字段结构：
-
-| 参数名   | 类型   | 是否必需 | 说明                       |
-| -------- | ------ | -------- | -------------------------- |
-| userId   | number | 必须     | 新建用户 ID，对应 `userId` |
-| username | string | 必须     | 用户名                     |
-| userRole | string | 必须     | 用户角色                   |
+`data` 字段结构：userId
 
 响应示例：
 
 ```json
 {
-  "code": 1,
-  "msg": "success",
-  "data": {
-    "userId": 1001,
-    "username": "alice",
-    "userRole": "advertiser"
-  }
+    "code": 0,
+    "data": 1999839285981343745,
+    "message": "ok"
 }
 ```
 
@@ -114,17 +104,17 @@
 
 - **参数格式**：`application/json`
 
-| 参数名   | 类型   | 是否必需 | 说明   |
-| -------- | ------ | -------- | ------ |
-| username | string | 必须     | 用户名 |
-| password | string | 必须     | 密码   |
+| 参数名       | 类型   | 是否必需 | 说明   |
+| ------------ | ------ | -------- | ------ |
+| username     | string | 必须     | 用户名 |
+| userPassword | string | 必须     | 密码   |
 
 请求示例：
 
 ```json
 {
-  "username": "alice",
-  "password": "123456"
+    "username": "qiao2",
+    "userPassword": "Password123!"
 }
 ```
 
@@ -132,31 +122,31 @@
 
 `data` 字段结构：
 
-| 参数名   | 类型   | 是否必需 | 说明                                           |
-| -------- | ------ | -------- | ---------------------------------------------- |
-| userId   | number | 必须     | 用户 ID，对应 `users.userId`                  |
-| username | string | 必须     | 用户名                                         |
-| userRole | string | 必须     | 角色：`admin` / `advertiser` / `publisher`    |
+| 参数名   | 类型   | 是否必需 | 说明                                         |
+| -------- | ------ | -------- | -------------------------------------------- |
+| username | string | 必须     | 用户名                                       |
+| userRole | string | 必须     | 角色：`admin` / `advertiser` / `publisher`   |
 | token    | string | 必须     | JWT Token，前端存储后放入 `Authorization` 头 |
 
 响应示例：
 
 ```json
 {
-  "code": 1,
-  "msg": "success",
-  "data": {
-    "userId": 1001,
-    "username": "alice",
-    "userRole": "advertiser",
-    "token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-  }
+    "code": 0,
+    "data": {
+        "username": "qiao2",
+        "userRole": "advertiser",
+        "token": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyUm9sZSI6ImFkdmVydGlzZXIiLCJ1c2VySWQiOjE5OTk4MzkyODU5ODEzNDM3NDUsInVzZXJuYW1lIjoicWlhbzIiLCJleHAiOjE3NjU3MjA0NjV9.zJphnqlNDhUouBC6zBojLPRMH1IC3CXhwLxP-YIQvjU"
+    },
+    "message": "ok"
 }
 ```
 
 ---
 
 ### 1.3 退出登录
+
+该接口后端不需要实现
 
 #### 1.3.1 基本信息
 
@@ -200,16 +190,25 @@
 
 | 参数名     | 类型   | 是否必需 | 说明                                |
 | ---------- | ------ | -------- | ----------------------------------- |
-| userId     | number | 必须     | 用户 ID                             |
 | username   | string | 必须     | 用户名                              |
 | userRole   | string | 必须     | 角色                                |
-| email      | string | 非必须   | 邮箱                                |
-| phone      | string | 非必须   | 电话                                |
-| createTime | string | 非必须   | 创建时间 `yyyy-MM-dd HH:mm:ss`     |
+
+```json
+{
+    "code": 0,
+    "data": {
+        "username": "qiao2",
+        "userRole": "advertiser",
+    },
+    "message": "ok"
+}
+```
+
+
 
 ---
 
-### 1.5 修改当前用户信息（邮箱、电话）
+### 1.5 修改当前用户信息（邮箱、电话）(待定)
 
 #### 1.5.1 基本信息
 
@@ -245,7 +244,7 @@
 
 #### 1.6.1 基本信息
 
-- **请求路径**：`/uploads`
+- **请求路径**：`file/uploads`
 - **请求方式**：`POST`
 - **接口描述**：上传图片或视频，保存到服务器本地目录，返回可访问的 `mediaUrl`，供 `advertisements.mediaUrl` 使用。
 
@@ -256,34 +255,24 @@
 | 参数名 | 类型 | 是否必需 | 说明                       |
 | ------ | ---- | -------- | -------------------------- |
 | file   | file | 必须     | 上传文件（图片 / 视频）    |
-| type   | text | 非必须   | 媒体类型：`image` / `video` |
 
 请求示例（表单）：
 
 - `file`：选择本地文件 `banner.png`
-- `type`：`image`
 
 #### 1.6.3 响应数据
-
-`data` 字段结构：
-
-| 参数名  | 类型   | 是否必需 | 说明                |
-| ------- | ------ | -------- | ------------------- |
-| mediaUrl | string | 必须     | 该文件的访问 URL   |
-| fileName | string | 非必须   | 服务器保存的文件名 |
 
 响应示例：
 
 ```json
 {
-  "code": 1,
-  "msg": "upload success",
-  "data": {
-    "mediaUrl": "https://cdn.example.com/uploads/2025/01/banner-xxx.png",
-    "fileName": "banner-xxx.png"
-  }
+    "code": 0,
+    "data": "/api/file/2025/12/13/0bcec2c5-42bd-4bf6-ac30-43cea429898a.jpg",
+    "message": "ok"
 }
 ```
+
+访问格式：http://localhost:8820/api/ad-resource/2025/12/14/ad75beae-e61a-418b-9b97-8a3d7c170ab4.jpg
 
 ---
 
