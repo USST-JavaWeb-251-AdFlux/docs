@@ -302,23 +302,57 @@
 | email        | string | 非必须   | 邮箱（来自 `users.email`）            |
 | phone        | string | 非必须   | 电话（来自 `users.phone`）            |
 
+响应：
+
+```json
+{
+  "code": 0,
+  "data": {
+    "advertiserId": 1999839285981343745,
+    "userId": 1999839285981343745,
+    "companyName": "上海理工大学",
+    "email": "test@usst.edu.cn",
+    "phone": "13800138000"
+  },
+  "message": "ok"
+}
+```
+
+
+
 ---
 
-### 2.2 修改业主公司信息（待定）
+### 2.2 新增业主公司信息
 
 #### 2.2.1 基本信息
 
-- **请求路径**：`/advertisers/profile`
+- **请求路径**：`/advertisers/company-name`
 - **请求方式**：`PUT`
-- **接口描述**：修改当前广告主的 `companyName` 等信息。
+- **接口描述**：广告主添加公司名称。
 
 #### 2.2.2 请求参数
 
 - **参数格式**：`application/json`
 
-| 参数名      | 类型   | 是否必需 | 说明       |
-| ----------- | ------ | -------- | ---------- |
-| companyName | string | 必须     | 新公司名称 |
+| 参数名      | 类型   | 是否必需 | 说明     |
+| ----------- | ------ | -------- | -------- |
+| companyName | string | 必须     | 公司名称 |
+
+```json
+{
+  "companyName": "上海理工大学"
+}
+```
+
+响应：
+
+```json
+{
+  "code": 0,
+  "data": true,
+  "message": "ok"
+}
+```
 
 ---
 
@@ -344,6 +378,22 @@
 | cardNumber | string | 必须     | 银行卡号（可做脱敏处理返回）  |
 | bankName   | string | 非必须   | 银行名称                      |
 
+```json
+{
+  "code": 0,
+  "data": [
+    {
+      "paymentId": 2000090668605206530,
+      "cardNumber": "1234********3456",
+      "bankName": "中国银行"
+    }
+  ],
+  "message": "ok"
+}
+```
+
+
+
 ---
 
 ### 2.4 新增支付方式
@@ -362,6 +412,29 @@
 | ---------- | ------ | -------- | -------- |
 | cardNumber | string | 必须     | 银行卡号 |
 | bankName   | string | 非必须   | 银行名称 |
+
+```json
+{
+  "cardNumber": "1234567890123456",
+  "bankName": "中国银行"
+}
+```
+
+响应：
+
+```json
+{
+  "code": 0,
+  "data": {
+    "paymentId": 2000090668605206530,
+    "cardNumber": "1234********3456",
+    "bankName": "中国银行"
+  },
+  "message": "ok"
+}
+```
+
+
 
 ---
 
@@ -470,6 +543,29 @@
 }
 ```
 
+响应：
+
+```json
+{
+  "code": 0,
+  "data": {
+    "adId": 2000105075087269890,
+    "title": "双11大促",
+    "adType": 0,
+    "mediaUrl": "https://cdn.example.com/uploads/banner-1.png",
+    "landingPage": "https://shop.example.com/activity/1111",
+    "categoryId": 1,
+    "adLayout": "banner",
+    "weeklyBudget": 5000,
+    "reviewStatus": 0,
+    "isActive": 0,
+    "createTime": "2025-12-14T07:26:24.720+00:00",
+    "editTime": "2025-12-14T07:26:24.720+00:00"
+  },
+  "message": "ok"
+}
+```
+
 #### 2.7.3 响应数据
 
 `data` 为新建广告的完整信息（同上 `records` 结构），其中：
@@ -498,6 +594,29 @@
 #### 2.8.3 响应数据
 
 - `data` 为一条广告对象，字段同 2.6 中 `records`。
+
+```json
+{
+  "code": 0,
+  "data": {
+    "adId": 2000105075087269890,
+    "title": "双11大促",
+    "adType": 0,
+    "mediaUrl": "https://cdn.example.com/uploads/banner-1.png",
+    "landingPage": "https://shop.example.com/activity/1111",
+    "categoryId": 1,
+    "adLayout": "banner",
+    "weeklyBudget": 5000,
+    "reviewStatus": 0,
+    "isActive": 0,
+    "createTime": "2025-12-14T07:26:25.000+00:00",
+    "editTime": "2025-12-14T07:26:25.000+00:00"
+  },
+  "message": "ok"
+}
+```
+
+
 
 ---
 
@@ -993,6 +1112,28 @@
 | 字段名      | 类型   | 是否必需 | 说明     |
 | ----------- | ------ | -------- | -------- |
 | categoryName| string | 必须     | 类别名称 |
+
+```json
+{
+  "categoryName": "测试"
+}
+```
+
+响应：
+
+```json
+{
+  "code": 0,
+  "data": {
+    "categoryId": 2000104592897499138,
+    "categoryName": "测试",
+    "createTime": "2025-12-14T07:24:29.649+00:00"
+  },
+  "message": "ok"
+}
+```
+
+
 
 #### 4.4.3 响应数据
 
