@@ -503,6 +503,107 @@
 | createTime   | string | 创建时间                                  |
 | editTime     | string | 编辑时间                                  |
 
+```json
+{
+  "code": 0,
+  "data": {
+    "records": [
+      {
+        "adId": 2000105075087269890,
+        "title": "双11大促",
+        "adType": 0,
+        "mediaUrl": "https://cdn.example.com/uploads/banner-1.png",
+        "landingPage": "https://shop.example.com/activity/1111",
+        "categoryId": 1,
+        "adLayout": "banner",
+        "weeklyBudget": 5000,
+        "reviewStatus": 0,
+        "isActive": 0,
+        "createTime": "2025-12-14T07:26:25.000+00:00",
+        "editTime": "2025-12-14T13:32:37.000+00:00"
+      },
+      {
+        "adId": 2000570446818955265,
+        "title": "2024新款智能手机发布",
+        "adType": 0,
+        "mediaUrl": "https://cdn.example.com/tech/phone-new.jpg",
+        "landingPage": "https://tech.example.com/products/phone15",
+        "categoryId": 2,
+        "adLayout": "banner",
+        "weeklyBudget": 12000,
+        "reviewStatus": 0,
+        "isActive": 0,
+        "createTime": "2025-12-15T14:15:38.000+00:00",
+        "editTime": "2025-12-15T14:15:38.000+00:00"
+      },
+      {
+        "adId": 2000570660875259906,
+        "title": "低息消费贷，极速审批",
+        "adType": 1,
+        "mediaUrl": "https://cdn.example.com/finance/loan-video.mp4",
+        "landingPage": "https://bank.example.com/loan/apply",
+        "categoryId": 3,
+        "adLayout": "sidebar",
+        "weeklyBudget": 4500,
+        "reviewStatus": 0,
+        "isActive": 0,
+        "createTime": "2025-12-15T14:16:29.000+00:00",
+        "editTime": "2025-12-15T14:16:29.000+00:00"
+      },
+      {
+        "adId": 2000570701702615041,
+        "title": "Java后端架构师特训营",
+        "adType": 0,
+        "mediaUrl": "https://cdn.example.com/edu/java-course.png",
+        "landingPage": "https://edu.example.com/course/java-arch",
+        "categoryId": 4,
+        "adLayout": "card",
+        "weeklyBudget": 2000,
+        "reviewStatus": 0,
+        "isActive": 0,
+        "createTime": "2025-12-15T14:16:39.000+00:00",
+        "editTime": "2025-12-15T14:16:39.000+00:00"
+      },
+      {
+        "adId": 2000570734757924865,
+        "title": "进口美妆年终清仓",
+        "adType": 0,
+        "mediaUrl": "https://cdn.example.com/shop/cosmetics.jpg",
+        "landingPage": "https://shop.example.com/category/beauty",
+        "categoryId": 5,
+        "adLayout": "card",
+        "weeklyBudget": 8500,
+        "reviewStatus": 0,
+        "isActive": 0,
+        "createTime": "2025-12-15T14:16:47.000+00:00",
+        "editTime": "2025-12-15T14:16:47.000+00:00"
+      },
+      {
+        "adId": 2000570778131222530,
+        "title": "日本京都樱花季5日游",
+        "adType": 1,
+        "mediaUrl": "https://cdn.example.com/travel/kyoto-sakura.mp4",
+        "landingPage": "https://travel.example.com/tours/jp-kyoto",
+        "categoryId": 6,
+        "adLayout": "banner",
+        "weeklyBudget": 6000,
+        "reviewStatus": 0,
+        "isActive": 0,
+        "createTime": "2025-12-15T14:16:57.000+00:00",
+        "editTime": "2025-12-15T14:16:57.000+00:00"
+      }
+    ],
+    "total": 6,
+    "size": 10,
+    "current": 1,
+    "pages": 1
+  },
+  "message": "ok"
+}
+```
+
+
+
 ---
 
 ### 2.7 创建新广告
@@ -633,9 +734,46 @@
 - **参数格式**：`application/json`
 - 任意字段可选，至少一个：`title, adType, mediaUrl, landingPage, categoryId, adLayout, weeklyBudget`。
 
+```json
+{
+  "title": "双12大促",
+  "adType": 0,
+  "mediaUrl": "https://cdn.example.com/uploads/banner-1.png",
+  "landingPage": "https://shop.example.com/activity/1111",
+  "categoryId": 1,
+  "adLayout": "banner",
+  "weeklyBudget": 5000.00
+}
+```
+
+
+
 #### 2.9.3 响应数据
 
 - `data`：更新后的广告详情。
+
+```json
+{
+  "code": 0,
+  "data": {
+    "adId": 2000105075087269890,
+    "title": "双12大促",
+    "adType": 0,
+    "mediaUrl": "https://cdn.example.com/uploads/banner-1.png",
+    "landingPage": "https://shop.example.com/activity/1111",
+    "categoryId": 1,
+    "adLayout": "banner",
+    "weeklyBudget": 5000,
+    "reviewStatus": 0,
+    "isActive": 0,
+    "createTime": "2025-12-14T07:26:25.000+00:00",
+    "editTime": "2025-12-15T14:43:21.628+00:00"
+  },
+  "message": "ok"
+}
+```
+
+
 
 ---
 
@@ -677,13 +815,44 @@
 | ------- | ------ | -------- | ---------------- |
 | isActive| number | 必须     | 0-暂停；1-开启   |
 
+```json
+{
+  "isActive": 1
+}
+```
+
+
+
 #### 2.11.3 响应数据
 
 - `data`：更新后的广告详情。
 
+```json
+{
+  "code": 0,
+  "data": {
+    "adId": 2000105075087269890,
+    "title": "双12大促",
+    "adType": 0,
+    "mediaUrl": "https://cdn.example.com/uploads/banner-1.png",
+    "landingPage": "https://shop.example.com/activity/1111",
+    "categoryId": 1,
+    "adLayout": "banner",
+    "weeklyBudget": 5000,
+    "reviewStatus": 1,
+    "isActive": 1,
+    "createTime": "2025-12-14T07:26:25.000+00:00",
+    "editTime": "2025-12-15T14:49:08.144+00:00"
+  },
+  "message": "ok"
+}
+```
+
+
+
 ---
 
-### 2.12 广告主数据概览
+### 2.12 广告主数据概览（未完成，考虑收益计算方案）
 
 #### 2.12.1 基本信息
 
@@ -706,16 +875,20 @@
 
 ```json
 {
-  "totalImpressions": 10000,
-  "totalClicks": 800,
-  "ctr": 0.08,
-  "totalSpend": 1234.56
+  "code": 0,
+  "data": {
+    "totalImpressions": 0,
+    "totalClicks": 0,
+    "ctr": 0,
+    "totalSpend": 0
+  },
+  "message": "ok"
 }
 ```
 
 ---
 
-### 2.13 单条广告统计
+### 2.13 单条广告统计（未完成，设计收益方案）
 
 #### 2.13.1 基本信息
 
@@ -783,6 +956,26 @@
 | verifyTime        | string | 验证时间，未验证则为 `null`             |
 | verificationToken | string | 验证代码（是否返回由后端安全策略决定）  |
 
+```json
+{
+  "code": 0,
+  "data": [
+    {
+      "websiteId": 2000592343371620354,
+      "websiteName": "测试",
+      "domain": "ahaha.com",
+      "isVerified": 0,
+      "createTime": "2025-12-15T15:42:39.000+00:00",
+      "verifyTime": null,
+      "verificationToken": "verify-0f6e1cd5fea588cda8bd782ef7b65099"
+    }
+  ],
+  "message": "ok"
+}
+```
+
+
+
 ---
 
 ### 3.2 提交新网站信息
@@ -802,6 +995,15 @@
 | websiteName | string | 必须     | 网站名称 |
 | domain      | string | 必须     | 网站域名 |
 
+```json
+{
+  "domain": "ahaha.com",
+  "websiteName": "测试"
+}
+```
+
+
+
 #### 3.2.3 响应数据
 
 `data` 字段：
@@ -813,6 +1015,24 @@
 | domain            | string | 网站域名     |
 | verificationToken | string | 验证代码     |
 | isVerified        | number | 初始为 0     |
+
+```json
+{
+  "code": 0,
+  "data": {
+    "websiteId": 2000592343371620354,
+    "websiteName": "测试",
+    "domain": "ahaha.com",
+    "isVerified": 0,
+    "createTime": "2025-12-15T15:42:38.529+00:00",
+    "verifyTime": null,
+    "verificationToken": "verify-0f6e1cd5fea588cda8bd782ef7b65099"
+  },
+  "message": "ok"
+}
+```
+
+
 
 ---
 
@@ -840,6 +1060,16 @@
 | ----------------- | ------ | -------- |
 | websiteId         | number | 网站 ID  |
 | verificationToken | string | 验证代码 |
+
+```json
+{
+  "code": 0,
+  "data": "verify-0f6e1cd5fea588cda8bd782ef7b65099",
+  "message": "ok"
+}
+```
+
+
 
 ---
 
@@ -1042,6 +1272,37 @@
 
 - 分页结构同 2.6。
 
+```json
+{
+  "code": 0,
+  "data": {
+    "records": [
+      {
+        "adId": 2000105075087269890,
+        "title": "双12大促",
+        "adType": 0,
+        "mediaUrl": "https://cdn.example.com/uploads/banner-1.png",
+        "landingPage": "https://shop.example.com/activity/1111",
+        "categoryId": 1,
+        "adLayout": "banner",
+        "weeklyBudget": 5000,
+        "reviewStatus": 1,
+        "isActive": 1,
+        "createTime": "2025-12-14T07:26:25.000+00:00",
+        "editTime": "2025-12-15T14:49:08.000+00:00"
+      }
+    ],
+    "total": 1,
+    "size": 10,
+    "current": 1,
+    "pages": 1
+  },
+  "message": "ok"
+}
+```
+
+
+
 ---
 
 ### 4.2 提交广告审核结果
@@ -1067,9 +1328,41 @@
 | reviewStatus| number | 必须     | 审核结果：1-通过；2-拒绝   |
 | reason      | string | 非必须   | 拒绝原因，审核通过时可为空 |
 
+```json
+{
+  "reason": "",
+  "reviewStatus": 1
+}
+```
+
+
+
 #### 4.2.3 响应数据
 
 - `data`：更新后的广告详情。
+
+```json
+{
+  "code": 0,
+  "data": {
+    "adId": 2000105075087269890,
+    "title": "双12大促",
+    "adType": 0,
+    "mediaUrl": "https://cdn.example.com/uploads/banner-1.png",
+    "landingPage": "https://shop.example.com/activity/1111",
+    "categoryId": 1,
+    "adLayout": "banner",
+    "weeklyBudget": 5000,
+    "reviewStatus": 1,
+    "isActive": 0,
+    "createTime": "2025-12-14T07:26:25.000+00:00",
+    "editTime": "2025-12-15T14:48:57.688+00:00"
+  },
+  "message": "ok"
+}
+```
+
+
 
 ---
 
@@ -1094,6 +1387,52 @@
 | categoryId  | number | 广告类别 ID |
 | categoryName| string | 类别名称    |
 | createTime  | string | 创建时间    |
+
+```json
+{
+  "code": 0,
+  "data": [
+    {
+      "categoryId": 1,
+      "categoryName": "商品",
+      "createTime": "2025-12-14T07:25:55.000+00:00"
+    },
+    {
+      "categoryId": 2,
+      "categoryName": "科技",
+      "createTime": "2025-12-15T13:51:23.000+00:00"
+    },
+    {
+      "categoryId": 3,
+      "categoryName": "金融",
+      "createTime": "2025-12-15T13:51:23.000+00:00"
+    },
+    {
+      "categoryId": 4,
+      "categoryName": "教育",
+      "createTime": "2025-12-15T13:51:23.000+00:00"
+    },
+    {
+      "categoryId": 5,
+      "categoryName": "电商",
+      "createTime": "2025-12-15T13:51:23.000+00:00"
+    },
+    {
+      "categoryId": 6,
+      "categoryName": "旅游",
+      "createTime": "2025-12-15T13:51:23.000+00:00"
+    },
+    {
+      "categoryId": 2000104592897499138,
+      "categoryName": "测试",
+      "createTime": "2025-12-14T07:24:30.000+00:00"
+    }
+  ],
+  "message": "ok"
+}
+```
+
+
 
 ---
 
@@ -1170,6 +1509,89 @@
 | phone     | string | 电话     |
 | createTime| string | 创建时间 |
 
+```json
+{
+  "code": 0,
+  "data": [
+    {
+      "userId": 1994253936127193090,
+      "username": "qiao",
+      "userPassword": "$2a$10$0qZJpQkPbexTSmul4Jwgh.aGqCbeKvnOO8/f7NjKWxW2ze8d2MSUq",
+      "userRole": "admin",
+      "email": "test@usst.edu.cn",
+      "phone": "13800138000",
+      "createTime": "2025-11-28T03:56:01.000+00:00"
+    },
+    {
+      "userId": 1994653213232058370,
+      "username": "qiao1",
+      "userPassword": "$2a$10$0qZJpQkPbexTSmul4Jwgh.aGqCbeKvnOO8/f7NjKWxW2ze8d2MSUq",
+      "userRole": "admin",
+      "email": "test@usst.edu.cn",
+      "phone": "13800138000",
+      "createTime": "2025-11-29T06:22:35.000+00:00"
+    },
+    {
+      "userId": 1994664809538813954,
+      "username": "qiao3",
+      "userPassword": "$2a$10$0qZJpQkPbexTSmul4Jwgh.aGqCbeKvnOO8/f7NjKWxW2ze8d2MSUq",
+      "userRole": "admin",
+      "email": "test@usst.edu.cn",
+      "phone": "13800138000",
+      "createTime": "2025-11-29T07:08:40.000+00:00"
+    },
+    {
+      "userId": 1994681290718330881,
+      "username": "BobLiu",
+      "userPassword": "$2a$10$gGGN1ayxd85gsugMmShhIuC3.nbRAefCtdY2B.WEExwywpSs2W7FS",
+      "userRole": "admin",
+      "email": "bobliu@bobliu.tech",
+      "phone": "15618381320",
+      "createTime": "2025-11-29T08:14:13.000+00:00"
+    },
+    {
+      "userId": 1994694844469104642,
+      "username": "ad001",
+      "userPassword": "$2a$10$rNjr.jrz6VjJZuzVW4u.U.YLZ86B34Onuv0QnJ5RWVjmLkXDYAYUe",
+      "userRole": "admin",
+      "email": "ad001@ad001.com",
+      "phone": "18888888888",
+      "createTime": "2025-11-29T09:08:05.000+00:00"
+    },
+    {
+      "userId": 2000589616625229826,
+      "username": "fafafa",
+      "userPassword": "$2a$10$zET33j6URUJP1zcG/w6pG.5Phkk7r2fNIpGgk0XI8DlxSKQU13oRW",
+      "userRole": "admin",
+      "email": "fafafa@qq.com",
+      "phone": "123456789",
+      "createTime": "2025-12-15T15:31:44.000+00:00"
+    },
+    {
+      "userId": 2000590269590282242,
+      "username": "fafafas",
+      "userPassword": "$2a$10$uExFFypsZrnjKwvqwGmPbuqOn/CG5gGev8rLNEDsBCc3PzT7hDvUi",
+      "userRole": "admin",
+      "email": "fafafa@qq.com",
+      "phone": "123456789",
+      "createTime": "2025-12-15T15:34:20.000+00:00"
+    },
+    {
+      "userId": 2000590909271973889,
+      "username": "fafafas0",
+      "userPassword": "$2a$10$tuEvP08z/vcMpIDChAxMDumnuKJUGJ8jFlB9uAraVZcuGpoQtVcC6",
+      "userRole": "admin",
+      "email": "fafafa@qq.com",
+      "phone": "123456789",
+      "createTime": "2025-12-15T15:36:45.000+00:00"
+    }
+  ],
+  "message": "ok"
+}
+```
+
+
+
 ---
 
 ### 4.6 创建管理员账号
@@ -1195,9 +1617,25 @@
 
 - 新建管理员的用户信息（同 4.5 单项）。
 
+```json
+{
+  "code": 0,
+  "data": {
+    "userId": 2000590909271973889,
+    "username": "fafafas0",
+    "userPassword": "$2a$10$tuEvP08z/vcMpIDChAxMDumnuKJUGJ8jFlB9uAraVZcuGpoQtVcC6",
+    "userRole": "admin",
+    "email": "fafafa@qq.com",
+    "phone": "123456789",
+    "createTime": "2025-12-15T15:36:45.220+00:00"
+  },
+  "message": "ok"
+}
+```
+
 ---
 
-### 4.7 删除管理员账号 / 移除权限（待定）
+### 4.7 删除管理员账号 / 移除权限（待定，没写）
 
 #### 4.7.1 基本信息
 
