@@ -192,7 +192,7 @@ create table if not exists advertisements
     isActive     tinyint       default 0               not null comment '是否启用投放（0-否；1-是）',
     createTime   datetime      default CURRENT_TIMESTAMP not null comment '创建时间',
     editTime     datetime      default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP not null comment '编辑时间',
-    FOREIGN KEY (advertiserId) REFERENCES advertisers(advertiserId),
+    FOREIGN KEY (advertiserId) REFERENCES users(userId),
     FOREIGN KEY (categoryId) REFERENCES ad_categories(categoryId)
 ) comment '广告信息表' collate = utf8mb4_unicode_ci;
 
