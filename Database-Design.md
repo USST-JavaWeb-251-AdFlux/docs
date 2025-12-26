@@ -160,21 +160,21 @@ create table if not exists ad_categories
 
 存储广告的核心数据。
 
-| 字段名       | 类型          | 描述                                      |
-| ------------ | ------------- | ----------------------------------------- |
-| adId         | BIGINT        | 广告 ID                                   |
-| advertiserId | BIGINT        | 广告业主 ID                               |
-| adType       | INT           | 广告类型（0-image; 1-video）              |
-| mediaUrl     | VARCHAR(255)  | 素材路径                                  |
-| title        | VARCHAR(200)  | 广告标题                                  |
-| landingPage  | VARCHAR(255)  | 点击跳转地址                              |
-| categoryId   | BIGINT        | 广告类别 ID                               |
-| adLayout     | VARCHAR(20)   | 广告版式（0-banner； 1-sidebar； 2-card） |
-| weeklyBudget | DECIMAL(10,2) | 周预算                                    |
-| reviewStatus | INT           | 审核状态（0-待审核; 1-通过; 2-拒绝）      |
-| isActive     | TINYINT       | 是否启用投放（0-否；1-是）                |
-| createTime   | DATETIME      | 创建时间                                  |
-| editTime     | DATETIME      | 编辑时间                                  |
+| 字段名       | 类型          | 描述                                       |
+| ------------ | ------------- | ------------------------------------------ |
+| adId         | BIGINT        | 广告 ID                                    |
+| advertiserId | BIGINT        | 广告业主 ID                                |
+| adType       | INT           | 广告类型（0-image; 1-video）               |
+| mediaUrl     | VARCHAR(255)  | 素材路径                                   |
+| title        | VARCHAR(200)  | 广告标题                                   |
+| landingPage  | VARCHAR(255)  | 点击跳转地址                               |
+| categoryId   | BIGINT        | 广告类别 ID                                |
+| adLayout     | INT           | 广告版式（0-video； 1-banner； 2-sidebar） |
+| weeklyBudget | DECIMAL(10,2) | 周预算                                     |
+| reviewStatus | INT           | 审核状态（0-待审核; 1-通过; 2-拒绝）       |
+| isActive     | TINYINT       | 是否启用投放（0-否；1-是）                 |
+| createTime   | DATETIME      | 创建时间                                   |
+| editTime     | DATETIME      | 编辑时间                                   |
 
 ```mysql
 create table if not exists advertisements
@@ -186,7 +186,7 @@ create table if not exists advertisements
     title        varchar(200)                          not null comment '广告标题',
     landingPage  varchar(255)                          null comment '点击跳转地址',
     categoryId   bigint                                not null comment '广告类别 ID',
-    adLayout     varchar(20)                           not null comment '广告版式（0-banner； 1-sidebar； 2-card）',
+    adLayout     int                                   not null comment '广告版式（0-video； 1-banner； 2-sidebar）',
     weeklyBudget decimal(10,2)                         not null comment '周预算',
     reviewStatus int           default 0               not null comment '审核状态（0-待审核; 1-通过; 2-拒绝）',
     isActive     tinyint       default 0               not null comment '是否启用投放（0-否；1-是）',
